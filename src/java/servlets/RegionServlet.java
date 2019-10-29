@@ -8,6 +8,7 @@ package servlets;
 import controllers.impl.RegionController;
 import java.io.IOException;
 import java.io.PrintWriter;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -39,6 +40,8 @@ public class RegionServlet extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             request.getSession().setAttribute("regions", rc.getAll());
             response.sendRedirect("index.jsp");
+//            response.sendRedirect("coba.jsp");
+//            response.sendRedirect("index.jsp");
         }
     }
 
@@ -54,15 +57,15 @@ public class RegionServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String id = request.getParameter("id")+"";
-        String action = request.getParameter("action")+"";
-//        if (action != null) {
-            if (action.equals("update")) {
-                request.getSession().setAttribute("region", rc.getById(id));
-            } else if (action.equals("delete")) {
-                request.getSession().setAttribute("status", rc.delete(id));
-            }
-//        }
+        String id = request.getParameter("id") + "";
+        String action = request.getParameter("action") + "";// "" nilai ganti agar tidak error null
+
+        if (action.equals("update")) {
+            request.getSession().setAttribute("region", rc.getById(id));
+        } else if (action.equals("delete")) {
+            request.getSession().setAttribute("status", rc.delete(id));
+        }
+
         processRequest(request, response);
     }
 
@@ -81,17 +84,6 @@ public class RegionServlet extends HttpServlet {
         String regionName = request.getParameter("regionName");
         rc.save(regionId, regionName);
 
-//        PrintWriter out = response.getWriter();
-//        out.println("<html>");
-//        out.println("<head>");
-//        out.println("<title>Data Region</title>");
-//        out.println("</head>");
-//        out.println("<body>");
-//        out.println("<h2> Tampil Data" + request.getContextPath() + "</h2>");
-//        out.println("<p> ID : " + rc.save(regionId, regionName) + "</p>");
-//        out.println("</body>");
-//        out.println("</html>");
-//        out.close();
         processRequest(request, response);
 
     }

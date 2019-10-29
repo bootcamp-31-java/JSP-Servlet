@@ -11,16 +11,13 @@
 <!DOCTYPE html>     
 <html>
     <head>
-        <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="fontawesome/css/all.css" type="text/css" />
-        <link href="css/simple-sidebar.css" rel="stylesheet">
+        <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="assets/fontawesome/css/all.css" type="text/css" />
+        <link href="assets/sideNav/simple-sidebar.css" rel="stylesheet">
+        <script src="assets/sweetalert/sweetalert2.all.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
-
-
-
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Region Form</title>
 
@@ -56,12 +53,8 @@
 
             <!-- Page Content -->
             <div id="page-content-wrapper">
-
                 <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
                     <button class="btn btn-primary ml-1" id="menu-toggle">Menu</button>
-
-
-
                     <a class="navbar-brand ml-3" href="index.jsp"><h2> Region Form</h2></a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
@@ -71,13 +64,12 @@
 
                 <div class="container-fluid">
                     <div class="container">
-
                         <!-- Button to Open the Modal -->
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#saveRegion">
                             New Region
                         </button>
 
-                        <!-- The Modal -->
+                        <!-- The Modal SAVE -->
                         <div class="modal fade" id="saveRegion">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content container">
@@ -93,19 +85,18 @@
                                         <form name="RegionForm" action="regionservlet" method="POST">
                                             <div class="form-group">
                                                 <label for="regionId">Region Id:</label>
-                                                <input  type="number" class="form-control" id="regionId" name="regionId" placeholder="Region ID" value="<%=(r != null) ? r.getId() : ""%>">
+                                                <input  type="number" class="form-control" id="regionId" name="regionId" placeholder="Region ID" value="">
                                             </div>
                                             <div>
                                                 <label for="regionId">Region Name:</label>
-                                                <input type="text" class="form-control" id="regionName" name="regionName" placeholder="Region Name" value="<%=(r != null) ? r.getName() : ""%>">
+                                                <input type="text" class="form-control" id="regionName" name="regionName" placeholder="Region Name" value="">
                                             </div>
                                             <div>
                                                 <br>
-                                                <button type="submit" class="btn btn-success border-dark" id="saveR">Submit</button>
+                                                <button type="submit" class="btn btn-success border-dark" data-btn="<%=session.getId()%>">Submit</button>
                                             </div>
                                         </form>
                                     </div>
-
 
                                     <!-- Modal footer -->
                                     <div class="modal-footer">
@@ -115,13 +106,11 @@
                                 </div>
                             </div>
                         </div>
+                        <%if (session.getAttribute("regions") != null) {
+                                for (Region region : regions) {%>
 
-                    </div>
-
-                    <div class="container">
-
-                        <!-- The Modal -->
-                        <div class="modal fade" id="updateRegion">
+                        <!-- The Modal Update -->
+                        <div class="modal fade" id="updateRegion<%=region.getId() %>">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content container">
 
@@ -135,16 +124,16 @@
                                     <div class="container">
                                         <form name="RegionForm" action="regionservlet" method="POST">
                                             <div class="form-group">
-                                                <label for="regionId" >Region Id:</label>
-                                                <input type="number" class="form-control" id="regionId" name="regionId" placeholder="Region ID" value="<%=(r != null) ? r.getId() : ""%>" disabled="">
+                                                <label for="regionId">Region Id:</label>
+                                                <input  type="number" class="form-control" id="regionId" name="regionId" placeholder="Region ID" value="<%=region.getId() %>" readonly="">
                                             </div>
                                             <div>
                                                 <label for="regionId">Region Name:</label>
-                                                <input type="text" class="form-control" id="regionName" name="regionName" placeholder="Region Name" value="<%=(r != null) ? r.getName() : ""%>">
+                                                <input type="text" class="form-control" id="regionName" name="regionName" placeholder="Region Name" value="<%=region.getName() %>">
                                             </div>
                                             <div>
                                                 <br>
-                                                <button type="submit" class="btn btn-success border-dark">Update</button>
+                                                <button type="submit" class="btn btn-success border-dark" >Submit</button>
                                             </div>
                                         </form>
                                     </div>
@@ -157,6 +146,10 @@
                                 </div>
                             </div>
                         </div>
+
+                        <%}
+                            }
+                        %>
 
                     </div>
 
@@ -175,8 +168,8 @@
                             <tbody>
                                 <%
                                     int record = 1;
-                                    for (Region region : regions) {
-
+                                    if (session.getAttribute("regions") != null) {
+                                        for (Region region : regions) {
                                 %>
                                 <tr>
                                     <td><%=record++%></td>
@@ -184,16 +177,16 @@
                                     <td><%=region.getName()%></td>
                                     <td>
 
-                                        <a data-toggle="modal" data-target="#updateRegion" class="btn btn-info" href="regionservlet?action=update&id=<%=region.getId()%>">
+                                        <a data-toggle="modal" data-target="#updateRegion<%=region.getId()%>" id="ButtonUpdateRegion" onclick="update()" role="button" class="btn btn-info">
                                             <i class="fas fa-edit" aria-hidden="true"></i> Update</a>
+
                                         <a class="btn btn-danger" href="regionservlet?action=delete&id=<%=region.getId()%>">
                                             <i class="fas fa-trash-alt" aria-hidden="true"></i> Delete</a>
-                <!--                            <a class="" aria-hidden="true" href="regionservlet?action=update&id=<%=region.getId()%>"> <u>Update</u></a>-->
-                <!--                            <a class=""  href="regionservlet?action=delete&id=<%=region.getId()%>">Delete</a>-->
 
                                     </td>
                                 </tr>
-                                <%  }%>
+                                <%  }
+                                    }%>
                             </tbody>
                         </table>
                     </div>
@@ -203,70 +196,43 @@
 
         </div>
         <!-- /#wrapper -->
-
+        <button type="button" id="tombol" >Klik Aja</button>
         <!-- Bootstrap core JavaScript -->
-        <script src="vendor/jquery/jquery.min.js"></script>
-        <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!--        <button type="button" id="tombol">Klik</button>-->
+        <script src="assets/jquery/jquery.min.js"></script>
+        <script src="assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+
         <!--        JS Script-->
         <script>
-            $("#menu-toggle").click(function (e) {
-                e.preventDefault();
-                $("#wrapper").toggleClass("toggled");
-            });
+                                            $("#menu-toggle").click(function (e) {
+                                                e.preventDefault();
+                                                $("#wrapper").toggleClass("toggled");
+                                            });
 
-            
+                                            const tombol = document.querySelector('#tombol');
+                                            tombol.addEventListener('click', function () {
+                                                Swal.fire({
+                                                    title: 'Success!',
+                                                    text: 'Latihan sweet alert',
+                                                    type: 'warning',
+                                                    confirmButtonText: 'Ok'
+                                                });
+                                            });
 
-            
+
+        </script>
+        <script>
+
+            var tid = setInterval(function () {
+                if (document.readyState == 'complete')
+                    return;
+                clearInterval(tid);
+                $("#updateRegion").modal('show');
+            }, 100);
         </script>
 
 
-
-        <!-- Menu Toggle Script -->
-        <div class="container">
-
-            <!-- The Modal -->
-            <div class="modal fade" id="saveRegion">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content container">
-
-                        <!-- Modal Header -->
-                        <div class="modal-header">
-                            <h4 class="modal-title">Form Region</h4>
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        </div>
-
-                        <!-- Modal body -->
-                        <div class="container">
-                            <form name="RegionForm" action="regionservlet" method="POST">
-                                <div class="form-group">
-                                    <label for="regionId">Region Id:</label>
-                                    <input  type="number" class="form-control" id="regionId" name="regionId" placeholder="Region ID" value="<%=(r != null) ? r.getId() : ""%>">
-                                </div>
-                                <div>
-                                    <label for="regionId">Region Name:</label>
-                                    <input type="text" class="form-control" id="regionName" name="regionName" placeholder="Region Name" value="<%=(r != null) ? r.getName() : ""%>">
-                                </div>
-                                <div>
-                                    <br>
-                                    <button type="submit" class="btn btn-success border-dark">Submit</button>
-                                </div>
-
-                            </form>
-                        </div>
-
-                        <!-- Modal footer -->
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
     </body>
+
 
     <!--Destroy Session-->
     <%
